@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin · Questionário Município da Horta · Enbia</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+:root{
+  --bg:#F7F7FB; --card:#FFFFFF; --ink:#201F30; --muted:#6B6987; --line:#DEDDE9; --soft:#EEEEF5;
+  --accent:#5638E1; --accent-strong:#4526C9; --accent-soft:#F1EFFD; --accent-ink:#FFFFFF; --input:#FFFFFF;
+  --danger:#C02626; --ok:#1F8A5B; --bar:#FFFFFF;
+  --shadow:0 1px 2px rgba(32,31,48,.05),0 4px 16px rgba(86,56,225,.06);
+  --font:"Inter",Arial,system-ui,sans-serif;
+  --display:"Space Grotesk","Inter",Arial,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#131221; --card:#1A1930; --ink:#ECEBF5; --muted:#918FAB; --line:#302E4D; --soft:#211F3A;
+    --accent:#A998F0; --accent-strong:#CBC3F7; --accent-soft:#2C1878; --accent-ink:#131221; --input:#211F3A;
+    --danger:#F6736F; --ok:#4FCF94; --bar:#0D0C17; --shadow:none; color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+header.top{background:var(--bar);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:12px 24px;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:12px}
+.wm{font:700 22px/1 var(--display);letter-spacing:-.5px;color:var(--accent);text-decoration:none}
+.sep{width:1px;height:20px;background:var(--line)}
+.sub{color:var(--muted);font-size:13px}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px;display:flex;flex-direction:column;gap:20px}
+
+.login-box{max-width:400px;margin:64px auto;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:26px}
+.login-box h1{font:700 22px/1.2 var(--display);margin:0 0 6px}
+.login-box p{color:var(--muted);margin:0 0 18px;font-size:13px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:12px;color:var(--muted);font-weight:500}
+.fi{border:1px solid var(--line);background:var(--input);border-radius:8px;padding:9px 11px;width:100%}
+.fi:focus{outline:2px solid var(--accent);border-color:var(--ink)}
+
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{background:var(--accent-strong);border-color:var(--accent-strong)}
+.btn.small{padding:5px 10px;font-size:12px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.card-h{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.card-h h2{font:700 17px/1.2 var(--display);margin:0}
+.card-b{padding:18px 20px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 18px}
+.kpi .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.kpi .val{font:700 24px/1.2 var(--display);margin-top:4px}
+.kpi .meta{font-size:12px;color:var(--muted);margin-top:4px}
+
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600}
+.badge.ok{background:rgba(31,138,91,.14);color:var(--ok)}
+.badge.draft{background:var(--accent-soft);color:var(--accent)}
+
+.dl-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 20px}
+.info-item .k{font-size:12px;color:var(--muted)}
+.info-item .v{font-weight:600;margin-top:2px}
+
+.sec-bar{display:grid;grid-template-columns:minmax(0,220px) auto 1fr;gap:10px 16px;align-items:center;margin-bottom:10px}
+.sec-bar:last-child{margin-bottom:0}
+.meter{height:8px;border-radius:4px;background:var(--soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:4px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--soft)}
+tr:last-child td{border-bottom:0}
+.q-id{font:700 12px/1 var(--mono);color:var(--accent);white-space:nowrap}
+.ans-empty{color:var(--muted);font-style:italic}
+.err-msg{color:var(--danger);font-size:13px;margin:8px 0 0}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <a class="wm" href="/">enbia</a>
+    <span class="sep"></span>
+    <span class="sub">Administração · Questionário Município da Horta</span>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <a class="btn small" href="/" target="_blank">Abrir Questionário Público ↗</a>
+    <button class="btn small" id="btnRefresh" hidden>Atualizar</button>
+    <button class="btn small" id="btnLogout" hidden>Sair</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- Ecrã de Login -->
+  <div class="login-box" id="loginView" hidden>
+    <h1>Área de Administração</h1>
+    <p>Introduza as credenciais para consultar e descarregar o levantamento do Município da Horta.</p>
+    <form id="loginForm">
+      <div class="field">
+        <label for="u">Utilizador</label>
+        <input class="fi" id="u" name="username" type="text" autocomplete="username" required value="admin">
+      </div>
+      <div class="field">
+        <label for="p">Palavra-passe</label>
+        <input class="fi" id="p" name="password" type="password" autocomplete="current-password" required autofocus>
+      </div>
+      <button class="btn primary" type="submit" style="width:100%;justify-content:center">Entrar</button>
+      <p class="err-msg" id="loginErr" hidden></p>
+    </form>
+  </div>
+
+  <!-- Painel Admin -->
+  <div id="adminView" hidden style="display:flex;flex-direction:column;gap:20px">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="lbl">Estado do Questionário</div>
+        <div class="val" id="kpiStatus">—</div>
+        <div class="meta" id="kpiUpdated">—</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Perguntas Respondidas</div>
+        <div class="val" id="kpiProgress">0 / 52</div>
+        <div class="meta" id="kpiPct">0% concluído</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Processo Prioritário (4.1)</div>
+        <div class="val" id="kpiPrio" style="font-size:18px">—</div>
+        <div class="meta">Escolhido pelo Município</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Submissões Gravadas</div>
+        <div class="val" id="kpiSubs">0</div>
+        <div class="meta" id="kpiSource">PostgreSQL CT 106</div>
+      </div>
+    </div>
+
+    <!-- Downloads do Formulário Preenchido -->
+    <section class="card">
+      <div class="card-h">
+        <h2>Descarregar Formulário Preenchido (Estado Atual)</h2>
+        <span class="sub">Pronto para orçamento ou importação na app Levantamentos</span>
+      </div>
+      <div class="card-b">
+        <div class="dl-bar">
+          <a class="btn primary" href="/api/admin/download/html">⬇ Descarregar Formulário HTML Preenchido (.html)</a>
+          <a class="btn" href="/api/admin/download/levantamentos">⬇ Exportar para App Levantamentos (.json)</a>
+          <a class="btn" href="/api/admin/download/txt">⬇ Relatório em Texto (.txt)</a>
+          <a class="btn" href="/api/admin/download/raw">⬇ JSON Bruto (.json)</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Identificação e Progresso por Secção -->
+    <section class="card">
+      <div class="card-h">
+        <h2>Identificação &amp; Progresso por Secção</h2>
+      </div>
+      <div class="card-b" style="display:flex;flex-direction:column;gap:20px">
+        <div class="info-grid" id="coordGrid"></div>
+        <div style="border-top:1px solid var(--line);padding-top:16px" id="secProgress"></div>
+      </div>
+    </section>
+
+    <!-- Histórico de Submissões -->
+    <section class="card">
+      <div class="card-h">
+        <h2>Histórico de Submissões na Base de Dados</h2>
+      </div>
+      <div class="card-b" style="padding:0">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Data / Hora</th>
+              <th>Coordenador</th>
+              <th>Respondidas</th>
+              <th>Prioridade</th>
+              <th>Descarregar versão</th>
+            </tr>
+          </thead>
+          <tbody id="subsBody">
+            <tr><td colspan="6" class="ans-empty">Sem submissões explícitas registadas até ao momento (as respostas em curso já estão disponíveis acima).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Respostas Detalhadas -->
+    <section class="card">
+      <div class="card-h">
+        <h2>Respostas Detalhadas por Secção</h2>
+        <label style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="chkOnlyAnswered"> Mostrar apenas respondidas
+        </label>
+      </div>
+      <div id="sectionsContainer"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  const loginView = document.getElementById('loginView');
+  const adminView = document.getElementById('adminView');
+  const btnRefresh = document.getElementById('btnRefresh');
+  const btnLogout = document.getElementById('btnLogout');
+  let lastOverview = null;
+
+  function fmtDate(iso){
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('pt-PT', {day:'2-digit', month:'2-digit', year:'numeric'}) + ' às ' + d.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
+  }
+
+  function esc(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  async function loadOverview(){
+    const res = await fetch('/api/admin/overview');
+    if (res.status === 401){
+      loginView.hidden = false;
+      adminView.hidden = true;
+      btnRefresh.hidden = true;
+      btnLogout.hidden = true;
+      return;
+    }
+    const data = await res.json();
+    if (!data.ok) return;
+    lastOverview = data;
+    loginView.hidden = true;
+    adminView.hidden = false;
+    btnRefresh.hidden = false;
+    btnLogout.hidden = false;
+    renderOverview(data);
+  }
+
+  function renderOverview(data){
+    const st = data.state;
+    const isSub = st.status === 'submitted';
+    document.getElementById('kpiStatus').innerHTML = isSub
+      ? '<span class="badge ok">Submetido</span>'
+      : '<span class="badge draft">Em preenchimento</span>';
+    document.getElementById('kpiUpdated').textContent = st.updatedAt
+      ? 'Última edição: ' + fmtDate(st.updatedAt)
+      : 'Valores iniciais da reunião';
+
+    const pct = Math.round(100 * st.answeredCount / st.totalCount);
+    document.getElementById('kpiProgress').textContent = st.answeredCount + ' / ' + st.totalCount;
+    document.getElementById('kpiPct').textContent = pct + '% concluído';
+    document.getElementById('kpiPrio').textContent = st.prioridade || 'Por indicar';
+    document.getElementById('kpiSubs').textContent = (data.submissions || []).length;
+    document.getElementById('kpiSource').textContent = st.source === 'postgres' ? 'Guardado em PostgreSQL (CT 106)' : 'Armazenamento ativo (' + st.source + ')';
+
+    const c = st.coordinator || {};
+    const r = st.sectionResponders || {};
+    document.getElementById('coordGrid').innerHTML = [
+      ['Nome (Coordenador)', c.nome || '—'],
+      ['Cargo', c.cargo || '—'],
+      ['Serviço / Unidade Orgânica', c.servico || '—'],
+      ['Email', c.email || '—'],
+      ['Telefone', c.tel || '—'],
+      ['Resp. Secção 1 (Emails)', r.r1 || '(Coordenador)'],
+      ['Resp. Secção 2 (Compras)', r.r2 || '(Coordenador)'],
+      ['Resp. Secção 3 (EPI)', r.r3 || '(Coordenador)'],
+    ].map(([k, v]) => `<div class="info-item"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`).join('');
+
+    document.getElementById('secProgress').innerHTML = st.sections.map(s => {
+      const p = Math.round(100 * s.answered / s.total);
+      return `<div class="sec-bar">
+        <div><b>${s.n}. ${esc(s.nav)}</b>${s.who ? `<div style="font-size:12px;color:var(--muted)">${esc(s.who)}</div>` : ''}</div>
+        <div style="font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px">${s.answered} / ${s.total} (${p}%)</div>
+        <div class="meter"><i style="width:${p}%"></i></div>
+      </div>`;
+    }).join('');
+
+    const subs = data.submissions || [];
+    const subsBody = document.getElementById('subsBody');
+    if (!subs.length){
+      subsBody.innerHTML = '<tr><td colspan="6" class="ans-empty">Ainda não clicou em «Submeter respostas» (o estado atual em curso já pode ser descarregado nos botões acima).</td></tr>';
+    } else {
+      subsBody.innerHTML = subs.map(sub => `<tr>
+        <td class="q-id">#${esc(sub.id)}</td>
+        <td>${esc(fmtDate(sub.created_at))}</td>
+        <td>${esc(sub.id_nome || '—')} <span style="color:var(--muted)">${esc(sub.id_cargo ? '· ' + sub.id_cargo : '')}</span></td>
+        <td><b>${esc(sub.answered_count)}</b> / ${esc(sub.total_count)}</td>
+        <td>${esc(sub.prioridade || '—')}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <a class="btn small" href="/api/admin/download/html?submissionId=${encodeURIComponent(sub.id)}">.HTML</a>
+          <a class="btn small" href="/api/admin/download/levantamentos?submissionId=${encodeURIComponent(sub.id)}">Levantamentos .JSON</a>
+          <a class="btn small" href="/api/admin/download/txt?submissionId=${encodeURIComponent(sub.id)}">.TXT</a>
+        </td>
+      </tr>`).join('');
+    }
+
+    renderSections(st.sections);
+  }
+
+  function renderSections(sections){
+    const onlyAns = document.getElementById('chkOnlyAnswered').checked;
+    const container = document.getElementById('sectionsContainer');
+    container.innerHTML = sections.map(s => {
+      const qs = onlyAns ? s.questions.filter(q => q.answered) : s.questions;
+      return `<div style="border-top:1px solid var(--line)">
+        <div style="padding:12px 20px;background:var(--soft);font-weight:700;display:flex;justify-content:space-between">
+          <span>${s.n}. ${esc(s.title)}</span>
+          <span style="font-size:12px;color:var(--muted)">${s.answered} de ${s.total} respondidas</span>
+        </div>
+        <table>
+          <thead><tr><th style="width:60px">ID</th><th style="width:42%">Pergunta</th><th>Resposta</th></tr></thead>
+          <tbody>
+            ${qs.length ? qs.map(q => `<tr>
+              <td class="q-id">${esc(q.id)}</td>
+              <td>${esc(q.q)}</td>
+              <td>${q.answerText ? `<b>${esc(q.answerText)}</b>` : '<span class="ans-empty">(sem resposta)</span>'}</td>
+            </tr>`).join('') : '<tr><td colspan="3" class="ans-empty">Nenhuma pergunta respondida nesta secção.</td></tr>'}
+          </tbody>
+        </table>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('chkOnlyAnswered').addEventListener('change', () => {
+    if (lastOverview) renderSections(lastOverview.state.sections);
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const err = document.getElementById('loginErr');
+    err.hidden = true;
+    const username = document.getElementById('u').value.trim();
+    const password = document.getElementById('p').value;
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
+    if (res.ok && data.ok){
+      document.getElementById('p').value = '';
+      loadOverview();
+    } else {
+      err.textContent = data.error || 'Credenciais inválidas';
+      err.hidden = false;
+    }
+  });
+
+  btnRefresh.addEventListener('click', loadOverview);
+  btnLogout.addEventListener('click', async () => {
+    await fetch('/api/admin/logout', { method: 'POST' });
+    loadOverview();
+  });
+
+  loadOverview();
+})();
+</script>
+</body>
+</html>

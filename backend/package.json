@@ -1,0 +1,16 @@
+{
+  "name": "enbia-questionario-horta",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Questionário de levantamento de processos — Município da Horta (Enbia)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "migrate": "node migrate.js"
+  },
+  "dependencies": {
+    "enbia-questionario-horta": "file:",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}

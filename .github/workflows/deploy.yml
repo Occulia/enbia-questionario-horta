@@ -1,0 +1,33 @@
+name: Deploy to CT
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  SERVICE_NAME: enbia-questionario-horta
+  DEPLOY_DIR: /opt/enbia-questionario-horta
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, lowservices]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync files to CT
+        run: |
+          mkdir -p "$DEPLOY_DIR/data"
+          rsync -a --delete \
+            --exclude '.env' \
+            --exclude 'data' \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            ./ "$DEPLOY_DIR/"
+
+      - name: Build and start container
+        working-directory: ${{ env.DEPLOY_DIR }}
+        run: |
+          docker compose up -d --build
+          docker image prune -f

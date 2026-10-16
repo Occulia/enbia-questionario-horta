@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    image: ${SERVICE_NAME:-enbia-questionario-horta}:latest
+    container_name: ${SERVICE_NAME:-enbia-questionario-horta}
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "${BIND_IP:-192.168.1.5}:${PORT:-4400}:${PORT:-4400}"
+    networks:
+      - virtual-network
+
+networks:
+  virtual-network:
+    external: true

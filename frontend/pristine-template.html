@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Questionário de Processos da Horta</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: barra de topo com a marca enbia e o progresso global; índice lateral fixo com o estado de cada secção; coluna de leitura até 780px com uma folha por serviço; bloco final para guardar e enviar. Tokens iguais aos da app Levantamentos Enbia. */
+:root{
+  --bg:#F7F7FB; --card:#FFFFFF; --ink:#201F30; --muted:#6B6987; --line:#DEDDE9; --soft:#EEEEF5;
+  --accent:#5638E1; --accent-strong:#4526C9; --accent-soft:#F1EFFD; --accent-ink:#FFFFFF; --input:#FFFFFF;
+  --danger:#C02626; --ok:#1F8A5B; --bar:#FFFFFF;
+  --shadow:0 1px 2px rgba(32,31,48,.05),0 4px 16px rgba(86,56,225,.06);
+  --font:"Inter",Arial,"Helvetica Neue",Helvetica,system-ui,sans-serif;
+  --display:"Space Grotesk","Inter",Arial,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131221; --card:#1A1930; --ink:#ECEBF5; --muted:#918FAB; --line:#302E4D; --soft:#211F3A;
+    --accent:#A998F0; --accent-strong:#CBC3F7; --accent-soft:#2C1878; --accent-ink:#131221; --input:#211F3A;
+    --danger:#F6736F; --ok:#4FCF94; --bar:#0D0C17; --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131221; --card:#1A1930; --ink:#ECEBF5; --muted:#918FAB; --line:#302E4D; --soft:#211F3A;
+  --accent:#A998F0; --accent-strong:#CBC3F7; --accent-soft:#2C1878; --accent-ink:#131221; --input:#211F3A;
+  --danger:#F6736F; --ok:#4FCF94; --bar:#0D0C17; --shadow:none; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bar);border-bottom:1px solid var(--line);display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding-block:10px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.wm{font:700 22px/1 var(--display);letter-spacing:-.5px;color:var(--accent)}
+.sep{width:1px;height:22px;background:var(--line)}
+.brand .sub{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.prog{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);min-width:0}
+.prog b{color:var(--ink);font-variant-numeric:tabular-nums}
+.meter{width:120px;height:6px;border-radius:4px;background:var(--soft);overflow:hidden;flex:none}
+.meter i{display:block;height:100%;width:0;background:var(--accent);border-radius:4px;transition:width .25s}
+
+.shell{display:grid;grid-template-columns:210px minmax(0,780px);justify-content:center;gap:36px;padding-block:28px 96px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);align-self:start;display:flex;flex-direction:column;gap:2px}
+nav.toc .grp{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 10px 6px}
+nav.toc a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:14px}
+nav.toc a:hover{background:var(--soft)}
+nav.toc a.on{background:var(--accent);color:var(--accent-ink);font-weight:600}
+nav.toc a .n{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+nav.toc a.on .n{color:var(--accent-ink)}
+nav.toc a.full .n{color:var(--ok);font-weight:700}
+nav.toc a.on.full .n{color:var(--accent-ink)}
+main{min-width:0;display:flex;flex-direction:column;gap:20px}
+#form{display:contents}
+
+.intro{padding:4px 0 6px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;margin:0 0 8px}
+h1{font:700 32px/1.15 var(--display);letter-spacing:-.6px;margin:0 0 10px;text-wrap:balance}
+h2{font:700 21px/1.25 var(--display);letter-spacing:-.3px;margin:0;text-wrap:balance}
+.lead{margin:0 0 14px;max-width:64ch}
+.facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 18px;padding:0;list-style:none;color:var(--muted);font-size:13px}
+.facts li{display:flex;align-items:center;gap:6px}
+.facts li::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--accent);flex:none}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none;counter-reset:st}
+.steps li{counter-increment:st;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted)}
+.steps li b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+.steps li b::before{content:counter(st) ". ";color:var(--accent)}
+.privacy{margin:14px 0 0;font-size:13px;color:var(--muted);max-width:68ch}
+.restore{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:14px 0 0;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:13px}
+
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);scroll-margin-top:84px}
+.sheet-h{padding:20px 22px 16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.sheet-h .tag{font:600 11px/1 var(--font);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sheet-h p{margin:0;color:var(--muted);font-size:14px;max-width:66ch}
+.who{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;margin-top:8px;max-width:440px}
+.who label{font-size:12px;color:var(--muted)}
+.qs{padding:0 22px 6px}
+.q{padding:18px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.q:first-child{border-top:0}
+.qh{display:flex;gap:10px;align-items:baseline}
+.qn{font:700 12px/1 var(--mono);background:var(--soft);color:var(--muted);padding:5px 7px;border-radius:6px;white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}
+.q.done .qn{background:var(--accent);color:var(--accent-ink)}
+.ql{font-weight:600;line-height:1.4}
+.pre{display:inline-block;margin-left:8px;font-size:11px;font-weight:600;line-height:1;padding:4px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;vertical-align:2px}
+.hint{margin:0;font-size:13px;color:var(--muted);max-width:68ch}
+
+.fi{border:1px solid var(--line);background:var(--input);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+textarea.fi{min-height:84px;resize:vertical;line-height:1.5}
+.fi:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--ink)}
+.fi[aria-invalid="true"]{border-color:var(--danger)}
+.numrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.numrow .fi{width:160px;font-variant-numeric:tabular-nums}
+.unit{font-size:13px;color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--input);border-radius:999px;padding:6px 13px;cursor:pointer;font-size:13px;line-height:1.35;max-width:100%}
+.opt:hover{border-color:var(--muted)}
+.opt:has(input:checked){background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.opt input{margin:0;accent-color:var(--ink);flex:none}
+.opt:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.other{max-width:420px}
+.extra{display:flex;flex-direction:column;gap:4px;margin-top:2px}
+.extra label{font-size:12px;color:var(--muted)}
+.calc{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 14px}
+.calc .cf{display:flex;flex-direction:column;gap:4px}
+.calc .cf label{font-size:12px;color:var(--muted)}
+.calc .fi{width:150px;font-variant-numeric:tabular-nums}
+.calc .x{color:var(--muted);padding-bottom:9px}
+.calc output{padding:8px 12px;border-radius:8px;background:var(--soft);font-variant-numeric:tabular-nums;font-weight:600;min-width:150px}
+
+.idgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;padding:18px 22px 22px}
+.idgrid .f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.idgrid .f.wide{grid-column:1/-1}
+.idgrid label{font-size:12px;color:var(--muted)}
+.req{color:var(--danger)}
+
+.send .body{padding:18px 22px 22px;display:flex;flex-direction:column;gap:16px}
+.sum{display:grid;grid-template-columns:minmax(0,1fr) auto 120px;gap:8px 14px;align-items:center;font-size:14px;margin:0}
+.sum dt{min-width:0}
+.sum dd{margin:0;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;font-size:13px}
+.sum .meter{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1.2}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{background:var(--accent-strong);border-color:var(--accent-strong)}
+.btn.small{padding:5px 10px;font-size:12px}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted);padding:6px 8px;font-size:13px}
+.btn.ghost:hover{color:var(--ink);background:var(--soft)}
+.btn.ghost.warn:hover{color:var(--danger)}
+.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff;font-weight:600}
+.btn:disabled{opacity:.6;cursor:progress}
+.msg{margin:0;font-size:14px;padding:10px 12px;border-radius:8px;background:var(--soft)}
+.msg.err{color:var(--danger)}
+.msg.ok{color:var(--ok)}
+.status{font-size:12px;color:var(--muted);margin:0}
+.confirm{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:13px;padding:10px 12px;border:1px solid var(--danger);border-radius:8px}
+.fallback{display:flex;flex-direction:column;gap:6px}
+.fallback textarea{min-height:220px;font:12px/1.5 var(--mono)}
+.team{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+footer{font-size:12px;color:var(--muted);padding:6px 2px 0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;max-width:min(90vw,520px)}
+.toast.on{opacity:1}
+
+@media (max-width:900px){
+  header.top{position:static;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .prog{margin-left:0;width:100%}
+  .meter{flex:1;width:auto}
+  .shell{grid-template-columns:minmax(0,1fr);gap:18px;padding-block:0 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;flex-direction:row;overflow-x:auto;gap:4px;padding-block:8px;background:var(--bg);border-bottom:1px solid var(--line);margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  nav.toc .grp{display:none}
+  nav.toc a{white-space:nowrap;flex:none}
+  .sheet{scroll-margin-top:64px}
+  .steps{grid-template-columns:minmax(0,1fr)}
+  .idgrid{grid-template-columns:minmax(0,1fr);padding:16px}
+  .sheet-h{padding:18px 16px 14px}
+  .qs{padding:0 16px 4px}
+  .send .body{padding:16px}
+  h1{font-size:27px}
+  .sum{grid-template-columns:minmax(0,1fr) auto}
+  .sum .meter{display:none}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<header class="top">
+  <div class="brand"><span class="wm" aria-label="enbia">enbia</span><span class="sep" aria-hidden="true"></span><span class="sub">Município da Horta · Levantamento de processos</span></div>
+  <div class="prog" aria-live="polite"><span><b id="pDone">0</b> de <span id="pTot">0</span> respondidas</span><span class="meter" aria-hidden="true"><i id="pBar"></i></span></div>
+</header>
+
+<div class="shell">
+  <nav class="toc" id="toc" aria-label="Secções do questionário"></nav>
+  <main>
+    <section class="intro" id="inicio">
+      <p class="eyebrow">Diagnóstico Enbia · Município da Horta</p>
+      <h1>Questionário de levantamento de processos</h1>
+      <p class="lead">Este questionário prepara o diagnóstico de três processos do Município: triagem de emails, compras e orçamento anual, e gestão de EPI. Com as respostas, chegamos à sessão de trabalho com o essencial já mapeado e usamos o tempo convosco para validar e decidir.</p>
+      <ul class="facts">
+        <li>Cerca de 30 minutos no total</li>
+        <li>As respostas dadas na reunião já vêm preenchidas: confirme-as ou corrija-as</li>
+        <li>Cada secção pode ser respondida por um serviço diferente</li>
+        <li>Deixe em branco o que não se aplica</li>
+      </ul>
+      <ol class="steps">
+        <li><b>Responder</b>Pela ordem que preferir. Este computador guarda as respostas à medida que escreve, mesmo que feche o ficheiro.</li>
+        <li><b>Guardar</b>No fim da página, guarde uma cópia do ficheiro com as respostas. Pode reencaminhá-la a um colega para completar outra secção.</li>
+        <li><b>Enviar</b>Responda ao email da Enbia com a cópia preenchida em anexo.</li>
+      </ol>
+      <p class="privacy">Não inclua dados pessoais de munícipes ou trabalhadores. Quando der exemplos, use casos anonimizados.</p>
+      <div class="restore" id="restore" hidden>
+        <span id="restoreTxt"></span>
+        <button class="btn small" type="button" id="bRestore">Mostrar as respostas do ficheiro</button>
+      </div>
+    </section>
+
+    <section class="sheet" id="identificacao" aria-labelledby="h-id">
+      <div class="sheet-h"><span class="tag">Antes de começar</span><h2 id="h-id">Identificação</h2><p>Quem coordena as respostas do Município, para sabermos a quem pedir esclarecimentos.</p></div>
+      <div class="idgrid" id="idgrid"></div>
+    </section>
+
+    <form id="form" novalidate></form>
+
+    <section class="sheet send" id="enviar" aria-labelledby="h-send">
+      <div class="sheet-h"><span class="tag">Para terminar</span><h2 id="h-send">Guardar e enviar</h2><p>Guarde uma cópia deste ficheiro com as respostas e envie-a em resposta ao email da Enbia. Pode enviar quando terminar ou com o que já tiver.</p></div>
+      <div class="body">
+        <dl class="sum" id="sum"></dl>
+        <p class="msg err" id="err" role="alert" hidden></p>
+        <div class="btns">
+          <button class="btn primary" type="button" id="bSave">Guardar ficheiro com as respostas</button>
+          <button class="btn" type="button" id="bCopy">Copiar respostas em texto</button>
+        </div>
+        <p class="msg ok" id="ok" role="status" hidden></p>
+        <p class="msg" id="noDl" hidden>Aqui não é possível guardar ficheiros. Use «Copiar respostas em texto» e cole o texto no corpo do email.</p>
+        <div class="fallback" id="fb" hidden>
+          <label for="fbText" class="status">Não foi possível copiar automaticamente. Selecione o texto abaixo, copie-o e cole-o no email.</label>
+          <textarea class="fi" id="fbText" readonly></textarea>
+        </div>
+        <p class="status" id="status"></p>
+        <div>
+          <button class="btn ghost warn" type="button" id="bClear">Apagar as respostas guardadas neste computador</button>
+          <div class="confirm" id="confirm" hidden>
+            <span>Apagar as respostas guardadas neste computador e voltar ao questionário original? Esta ação não se desfaz.</span>
+            <button class="btn danger" type="button" id="bClearYes">Apagar</button>
+            <button class="btn" type="button" id="bClearNo">Cancelar</button>
+          </div>
+        </div>
+        <div class="team">
+          <span class="status">Uso interno da Enbia</span>
+          <button class="btn ghost" type="button" id="bLev">Exportar para a app Levantamentos (JSON)</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>Enbia, Inteligência e Automação · Enbiente. Nada é transmitido automaticamente: as respostas só chegam à Enbia quando nos enviar o ficheiro ou o texto.</footer>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="application/json" id="respostas" data-q>{}</script>
+<script data-q>
+(function(){
+"use strict";
+/* Cópia da página antes de qualquer renderização, usada para gravar o ficheiro com as respostas. */
+const PRISTINE = document.documentElement.outerHTML;
+const KEY = 'enbia-questionario-horta-v4';
+const DIAS_UTEIS = 21;
+
+/* Questões. t: text | long | num | one | multi | calc. pre: resposta dada na reunião, preenchida à partida. */
+const SECS = [
+  {n:1, slug:'emails', nav:'Triagem de emails', title:'Triagem de emails',
+   lead:'Como entram, circulam e são respondidos os emails dirigidos ao Município. As respostas assinaladas foram dadas na reunião: confirme-as ou corrija-as.',
+   qs:[
+    {id:'1.1', t:'text', q:'Qual o servidor de email?', pre:'Microsoft Office (Outlook)'},
+    {id:'1.2', t:'num', q:'Quantas caixas de correio entram na triagem?', unit:'caixas', hint:'Ficou por responder na reunião.'},
+    {id:'1.3', t:'one', q:'As caixas de correio são pessoais ou partilhadas?', opts:['Pessoais','Partilhadas','Ambas'], extra:{label:'Quais são as caixas?', ph:'Ex.: geral@… (partilhada), expediente@… (partilhada)'}},
+    {id:'1.4', t:'num', q:'Quantos emails são analisados por mês, em média, no conjunto dessas caixas?', unit:'emails por mês', pre:'2000'},
+    {id:'1.5', t:'long', q:'Qual é o processo atual, desde a chegada do email até à resposta ao remetente?', hint:'Se puder, acrescente quem lê, como escolhe o destino, se fica registado e como se sabe que o pedido foi respondido.', pre:'5 pessoas reencaminham emails diariamente.'},
+    {id:'1.6', t:'one', q:'Os emails recebidos ficam registados num sistema de gestão documental (registo de entrada)?', opts:['Sim, todos','Só alguns','Não'], extra:{label:'Que sistema?', ph:'Nome do software'}},
+    {id:'1.7', t:'multi', q:'Que tipos de mensagem predominam?', opts:['Pedidos e requerimentos de munícipes','Pedidos de informação','Fornecedores e faturas','Entidades públicas','Comunicação interna','Publicidade e spam','Outro'], other:'Outro', extra:{label:'Percentagem aproximada de cada tipo, se souber', ph:'Ex.: 40% munícipes, 25% fornecedores'}},
+    {id:'1.8', t:'multi', q:'Que informações determinam a pessoa para quem o email deve ser encaminhado?', opts:['Assunto','Remetente','Palavras-chave no texto','Tipo de pedido','Local ou freguesia','Anexos','Outro'], other:'Outro', extra:{label:'Descreva o critério com um ou dois exemplos', long:true, ph:'Ex.: pedidos sobre iluminação pública seguem para as Obras; pedidos de certidões seguem para o Atendimento'}},
+    {id:'1.9', t:'one', q:'Como é atribuído cada pedido a um departamento?', opts:['Por uma lista escrita de assuntos por serviço','Pelo conhecimento de quem faz a triagem','Por despacho de um dirigente','Outro'], other:'Outro', hint:'Se existir uma lista de assuntos por serviço, envie-a junto com as respostas.'},
+    {id:'1.10', t:'long', q:'Que informações devem ser recolhidas para complementar cada pedido?', hint:'Se variar por tipo de pedido, indique os tipos mais frequentes e o que falta habitualmente em cada um.', ph:'Ex.: identificação do requerente, local da ocorrência, n.º de processo, documentos em falta'},
+    {id:'1.11', t:'num', q:'Para quantos serviços ou pessoas são reencaminhados os emails?', unit:'destinos'},
+    {id:'1.12', t:'calc', q:'Mensalmente, quanto tempo é gasto neste processo?', hint:'Na reunião o tempo ficou por apurar. Indique quanto tempo dedica cada pessoa por dia; o total mensal é calculado com ' + DIAS_UTEIS + ' dias úteis.', pre:{p:'5'}},
+    {id:'1.13', t:'text', q:'Quantas pessoas estão envolvidas no processo, incluindo os serviços que respondem?', hint:'Se possível, substitua por uma estimativa.', pre:'Número indeterminado'},
+    {id:'1.14', t:'text', q:'Quanto tempo demora até darem resposta a um pedido?', hint:'Indique se o valor é medido ou estimado.', pre:'2 a 3 dias'},
+    {id:'1.15', t:'multi', q:'Qual é o resultado esperado da automação?', opts:['Reencaminhamento automático para o serviço certo','Resposta automática e interação com o remetente','Rascunho de resposta para um funcionário validar','Registo automático no sistema de gestão documental','Indicadores de volume e prazos de resposta'], pre:{arr:[0,1]}},
+    {id:'1.16', t:'long', q:'Que pedidos poderiam receber resposta automática, sem intervenção de um funcionário?', ph:'Ex.: horários, documentos necessários para um pedido, estado de um processo'},
+    {id:'1.17', t:'one', q:'As respostas automáticas podem seguir diretamente ou devem ser sempre validadas antes do envio?', opts:['Podem seguir diretamente nos casos definidos','Validação humana sempre obrigatória','A decidir']},
+    {id:'1.18', t:'one', q:'Pretendem que o munícipe tenha acesso ao estado do pedido na sua área pessoal dentro do site?', opts:['Sim','Não','A avaliar'], extra:{label:'O site já tem área pessoal do munícipe? Em que plataforma?', ph:'Ex.: portal do munícipe do fornecedor do ERP, site próprio sem área pessoal'}}
+   ]},
+  {n:2, slug:'compras', nav:'Compras e orçamento', title:'Processo de compra e orçamento anual',
+   lead:'Do pedido de compra ao pagamento da fatura, e a informação que alimenta o orçamento do ano seguinte. Idealmente respondida pela contabilidade ou pelo aprovisionamento.',
+   qs:[
+    {id:'2.1', t:'text', q:'Que software utilizam (ERP, CRM ou outros) e com que módulos?', ph:'Fornecedor e módulos em uso', hint:'Ex.: contabilidade, aprovisionamento, armazém, obras, gestão de fornecedores.'},
+    {id:'2.2', t:'one', q:'Têm servidor interno? Onde está alojado esse software?', opts:['Servidor interno do Município','Cloud do fornecedor','Misto','Não sei']},
+    {id:'2.3', t:'one', q:'É possível extrair dados desse software?', opts:['Por API ou ligação à base de dados','Exportação para Excel ou CSV','Apenas relatórios em PDF','Não sei'], hint:'Define se os dados podem ser lidos automaticamente ou se é preciso exportá-los.'},
+    {id:'2.4', t:'multi', q:'Como e onde são armazenadas as ordens de compra (requisições externas)?', opts:['No ERP','PDF em pasta partilhada','Email','Papel','Outro'], other:'Outro'},
+    {id:'2.5', t:'multi', q:'E as faturas, como e onde são armazenadas?', opts:['No ERP','Plataforma de faturação eletrónica','PDF em pasta partilhada','Email','Papel','Outro'], other:'Outro'},
+    {id:'2.6', t:'long', q:'Qual é o processo atual, desde a necessidade de compra até ao pagamento da fatura?', hint:'Ex.: pedido do serviço, cabimento, compromisso, requisição externa, receção do material, conferência da fatura, pagamento. Indique quem faz cada passo.'},
+    {id:'2.7', t:'one', q:'As faturas mencionam sempre a OC ou o número da requisição externa?', opts:['Sempre','Na maioria dos casos','Raramente','Não sei'], extra:{label:'O que fazem quando a referência falta?', ph:'Ex.: pedimos nova fatura, procuramos manualmente'}},
+    {id:'2.8', t:'multi', q:'Em que formato chegam as faturas?', opts:['Fatura eletrónica (XML)','PDF por email','Papel','Portal ou plataforma de faturação','Outro'], other:'Outro', extra:{label:'Percentagem aproximada de cada formato, se souber', ph:'Ex.: 60% PDF, 30% XML, 10% papel'}},
+    {id:'2.9', t:'num', q:'Quantas requisições externas emitem por mês, em média?', unit:'requisições por mês'},
+    {id:'2.10', t:'num', q:'Quantas faturas de fornecedores recebem por mês, em média?', unit:'faturas por mês'},
+    {id:'2.11', t:'long', q:'Como medem os consumos em obra?', hint:'Ex.: guias de remessa, requisições ao armazém, autos de medição, folhas de obra.'},
+    {id:'2.12', t:'multi', q:'Onde registam esses consumos?', opts:['No ERP','Em Excel','Em papel','Outro','Não'], other:'Outro', none:'Não'},
+    {id:'2.13', t:'multi', q:'Que dashboards de análise gostariam de ter?', opts:['Por obra','Por fornecedor','Por material','Por tipologia de investimento','Por rubrica orçamental','Por serviço ou centro de custo','Outra'], other:'Outra'},
+    {id:'2.14', t:'text', q:'Quantas pessoas intervêm no processo e em que serviços?'},
+    {id:'2.15', t:'num', q:'Mensalmente, quanto tempo é gasto neste processo, somando todas as pessoas?', unit:'horas por mês', hint:'Basta uma estimativa.'},
+    {id:'2.16', t:'text', q:'Quanto tempo gastam à procura de informação para definir o orçamento anual?', ph:'Ex.: 3 pessoas durante 2 semanas'},
+    {id:'2.17', t:'long', q:'Que informação é mais difícil de reunir para o orçamento?'}
+   ]},
+  {n:3, slug:'epi', nav:'EPI', title:'Equipamentos de proteção individual (EPI)',
+   lead:'Requisição, entrega, recolha e registo dos EPI. Idealmente respondida por quem gere a segurança no trabalho ou o armazém.',
+   qs:[
+    {id:'3.1', t:'long', q:'Como funciona o processo atual?', hint:'Quem pede, quem aprova, quem entrega e como se controla o stock.'},
+    {id:'3.2', t:'one', q:'Há requisições de material ao expediente? Por que circuito são pedidos os EPI?', opts:['Requisição ao expediente','Requisição ao armazém','Pedido direto ao responsável de segurança','Outro','Não'], other:'Outro'},
+    {id:'3.3', t:'one', q:'Há folhas de entrega e recolha dos EPI assinadas pelos colaboradores?', opts:['Sim, na entrega e na recolha','Só na entrega','Às vezes','Não']},
+    {id:'3.4', t:'multi', q:'Onde ficam guardados esses registos?', opts:['Em papel','Digitalizados','No ERP ou noutro software','Outro','Não'], other:'Outro', none:'Não'},
+    {id:'3.5', t:'one', q:'O processo é manual ou informatizado?', opts:['Totalmente manual','Parcialmente informatizado','Informatizado','Não'], extra:{label:'Que ferramentas usam?', ph:'Ex.: Excel, módulo de armazém do ERP'}},
+    {id:'3.6', t:'num', q:'Quantos colaboradores recebem EPI?', unit:'colaboradores'},
+    {id:'3.7', t:'one', q:'Todos os colaboradores têm número mecanográfico?', opts:['Sim','Não','Só alguns']},
+    {id:'3.8', t:'text', q:'A lista de colaboradores está disponível em que plataforma?', ph:'Ex.: módulo de recursos humanos do ERP, Excel'},
+    {id:'3.9', t:'num', q:'Quantas entregas de EPI fazem por mês, em média?', unit:'entregas por mês'},
+    {id:'3.10', t:'one', q:'Controlam prazos de validade e de substituição dos EPI?', opts:['Sim','Parcialmente','Não']},
+    {id:'3.11', t:'text', q:'Quantas pessoas intervêm no processo e em que serviços?'},
+    {id:'3.12', t:'one', q:'Querem uma aplicação para este propósito?', opts:['Sim','Não','A avaliar'], extra:{label:'O que deveria fazer?', long:true, ph:'Ex.: pedido pelo colaborador, aprovação, assinatura digital na entrega e na recolha, alertas de substituição, controlo de stock'}}
+   ]},
+  {n:4, slug:'prioridades', nav:'Prioridades', title:'Prioridades e documentos', noWho:true,
+   lead:'Para planearmos o trabalho e prepararmos a sessão com exemplos reais.',
+   qs:[
+    {id:'4.1', t:'one', q:'Qual destes processos tem maior prioridade para o Município?', opts:['Triagem de emails','Compras e orçamento anual','EPI']},
+    {id:'4.2', t:'long', q:'O que torna esse processo prioritário?'},
+    {id:'4.3', t:'long', q:'Há prazos, orçamento ou financiamento associados a este trabalho?', hint:'Ex.: candidatura a fundos, calendário do orçamento, compromissos do executivo.'},
+    {id:'4.4', t:'multi', q:'Que documentos de exemplo podem partilhar, sem dados pessoais?', opts:['Requisição externa','Fatura de fornecedor','Folha de entrega ou recolha de EPI','Exemplos de emails recebidos','Lista de assuntos por serviço usada na triagem','Organograma dos serviços'], hint:'Envie-os por email junto com o ficheiro de respostas.'},
+    {id:'4.5', t:'long', q:'Observações'}
+   ]}
+];
+/* Interlocutor registado no projeto Horta (Odoo); editável por quem responde. */
+const IDF = [
+  {k:'nome', label:'Nome', req:true, ph:'Nome completo', ac:'name', pre:'João Paulo Pereira'},
+  {k:'cargo', label:'Cargo', ph:'Ex.: Chefe de Divisão', pre:'Chefe do Gabinete'},
+  {k:'servico', label:'Serviço ou unidade orgânica', wide:true, pre:'Gabinete da Presidência'},
+  {k:'email', label:'Email', type:'email', ac:'email', pre:'jpereira@cmhorta.pt'},
+  {k:'tel', label:'Telefone', type:'tel', ac:'tel'}
+];
+const QS = {}; SECS.forEach(s => s.qs.forEach(q => { q.sec = s; QS[q.id] = q; }));
+const TOTAL = Object.keys(QS).length;
+const inViewer = !!(window.claude && typeof window.claude.use === 'function');
+
+/* ---------- estado ---------- */
+let A = {};
+let storageOk = true, lastSaved = 0, exportedAt = 0, fileState = {};
+function defaults(){
+  const d = {};
+  IDF.forEach(f => { if (f.pre) d['id_' + f.k] = f.pre; });
+  Object.values(QS).forEach(q => {
+    if (q.pre == null) return;
+    if (typeof q.pre === 'string') d[q.id] = q.pre;
+    else if (q.pre.p != null) d[q.id + '_p'] = q.pre.p;
+    else if (q.pre.arr) d[q.id] = q.pre.arr.map(i => q.opts[i]);
+  });
+  return d;
+}
+function readLocal(){
+  try { const raw = localStorage.getItem(KEY); return raw ? (JSON.parse(raw) || null) : null; }
+  catch(e){ storageOk = false; return null; }
+}
+function readFile(){
+  try { return JSON.parse(document.getElementById('respostas').textContent || '{}') || {}; } catch(e){ return {}; }
+}
+function loadState(){
+  fileState = readFile();
+  const L = readLocal();
+  const fT = +fileState._upd || 0, lT = L ? (+L._upd || 0) : 0;
+  if (L && lT >= fT){
+    A = L;
+    if (fT && lT > fT){
+      document.getElementById('restoreTxt').textContent = 'Este computador tem respostas mais recentes do que as gravadas no ficheiro (' + when(lT) + '). Estão a ser mostradas as deste computador.';
+      document.getElementById('restore').hidden = false;
+    }
+  }
+  else if (fT) A = JSON.parse(JSON.stringify(fileState));
+  else A = defaults();
+  exportedAt = +A._exp || 0;
+}
+let saveT = null;
+function dirty(){ A._upd = Date.now(); clearTimeout(saveT); saveT = setTimeout(saveNow, 300); }
+function saveNow(){
+  try { localStorage.setItem(KEY, JSON.stringify(A)); storageOk = true; lastSaved = Date.now(); }
+  catch(e){ storageOk = false; }
+  renderStatus();
+}
+const str = v => v == null ? '' : String(v).trim();
+const parseN = v => { const n = parseFloat(String(v == null ? '' : v).replace(/\s/g, '').replace(',', '.')); return isFinite(n) ? n : null; };
+const fmt1 = n => n.toLocaleString('pt-PT', {maximumFractionDigits:1});
+const hhmm = t => new Date(t).toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
+const when = t => new Date(t).toLocaleDateString('pt-PT', {day:'2-digit', month:'2-digit'}) + ' às ' + hhmm(t);
+
+function calcHours(q){ const p = parseN(A[q.id + '_p']), m = parseN(A[q.id + '_m']); return (p != null && m != null) ? p * m * DIAS_UTEIS / 60 : null; }
+function answered(q){
+  if (q.t === 'calc') return parseN(A[q.id + '_p']) != null && parseN(A[q.id + '_m']) != null;
+  const v = A[q.id];
+  if (Array.isArray(v)) return v.length > 0;
+  return !!str(v) || !!str(A[q.id + '_x']);
+}
+function answerText(q){
+  const parts = [];
+  if (q.t === 'calc'){
+    const p = str(A[q.id + '_p']), m = str(A[q.id + '_m']), hrs = calcHours(q);
+    if (hrs != null) parts.push(p + ' pessoas × ' + m + ' min por dia ≈ ' + fmt1(hrs) + ' h por mês (' + DIAS_UTEIS + ' dias úteis)');
+    else if (p) parts.push(p + ' pessoas (tempo diário por indicar)');
+    else if (m) parts.push(m + ' min por dia por pessoa (n.º de pessoas por indicar)');
+  } else if (q.t === 'one' || q.t === 'multi'){
+    let sel = A[q.id]; sel = Array.isArray(sel) ? sel : (str(sel) ? [str(sel)] : []);
+    const o = str(A[q.id + '_o']);
+    sel = sel.map(v => (q.other && v === q.other && o) ? v + ': ' + o : v);
+    if (sel.length) parts.push(sel.join('; '));
+  } else {
+    const v = str(A[q.id]);
+    if (v) parts.push(v + (q.unit && /^[\d\s.,]+$/.test(v) ? ' ' + q.unit : ''));
+  }
+  const x = str(A[q.id + '_x']);
+  if (x && q.extra) parts.push(q.extra.label.replace(/, se (souber|existir)$/, '') + ': ' + x);
+  return parts.join(' | ');
+}
+
+/* ---------- construção ---------- */
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if (attrs) for (const k in attrs){
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (v === true) el.setAttribute(k, '');
+    else el.setAttribute(k, v);
+  }
+  kids.flat().forEach(c => { if (c == null || c === false) return; el.append(c.nodeType ? c : document.createTextNode(String(c))); });
+  return el;
+}
+const base = id => 'a-' + id.replace('.', '-');
+
+function control(q, b, lid){
+  if (q.t === 'long') return h('textarea', {class:'fi', id:b, 'data-k':q.id, placeholder:q.ph || null, rows:'3'});
+  if (q.t === 'text') return h('input', {class:'fi', type:'text', id:b, 'data-k':q.id, placeholder:q.ph || null});
+  if (q.t === 'num') return h('div', {class:'numrow'}, h('input', {class:'fi', type:'text', inputmode:'decimal', id:b, 'data-k':q.id, autocomplete:'off'}), q.unit ? h('span', {class:'unit'}, q.unit) : null);
+  if (q.t === 'calc') return h('div', {class:'calc'},
+    h('div', {class:'cf'}, h('label', {for:b + '-p'}, 'Pessoas'), h('input', {class:'fi', type:'text', inputmode:'numeric', id:b + '-p', 'data-k':q.id + '_p', autocomplete:'off'})),
+    h('span', {class:'x', 'aria-hidden':'true'}, '×'),
+    h('div', {class:'cf'}, h('label', {for:b + '-m'}, 'Minutos por dia, por pessoa'), h('input', {class:'fi', type:'text', inputmode:'numeric', id:b + '-m', 'data-k':q.id + '_m', autocomplete:'off'})),
+    h('output', {id:b + '-out', for:b + '-p ' + b + '-m', 'aria-live':'polite'}, '≈ … h por mês'));
+  const g = h('div', {class:'opts', role: q.t === 'one' ? 'radiogroup' : 'group', 'aria-labelledby':lid});
+  q.opts.forEach((o, i) => {
+    const id = b + '-' + i;
+    g.append(h('label', {class:'opt', for:id}, h('input', {type: q.t === 'one' ? 'radio' : 'checkbox', name:b, id, value:o, 'data-k':q.id}), h('span', null, o)));
+  });
+  const wrap = h('div', {class:'extra'}, g);
+  if (q.other) wrap.append(h('input', {class:'fi other', type:'text', id:b + '-o', 'data-k':q.id + '_o', placeholder:'Qual?', 'aria-label':'Especificar ' + q.other.toLowerCase(), hidden:true}));
+  return wrap;
+}
+function questionEl(q){
+  const b = base(q.id), lid = b + '-l';
+  const labelled = q.t === 'one' || q.t === 'multi' || q.t === 'calc';
+  const tag = q.pre != null ? h('span', {class:'pre'}, 'Respondido na reunião') : null;
+  const el = h('div', {class:'q', id:'q-' + q.id.replace('.', '-'), 'data-q':q.id},
+    h('div', {class:'qh'}, h('span', {class:'qn'}, q.id),
+      labelled ? h('span', {class:'ql', id:lid}, q.q, tag) : h('label', {class:'ql', id:lid, for:b}, q.q, tag)));
+  if (q.hint) el.append(h('p', {class:'hint'}, q.hint));
+  el.append(control(q, b, lid));
+  if (q.extra){
+    const xid = b + '-x';
+    el.append(h('div', {class:'extra'}, h('label', {for:xid}, q.extra.label),
+      q.extra.long ? h('textarea', {class:'fi', id:xid, 'data-k':q.id + '_x', rows:'2', placeholder:q.extra.ph || null})
+                   : h('input', {class:'fi', type:'text', id:xid, 'data-k':q.id + '_x', placeholder:q.extra.ph || null})));
+  }
+  return el;
+}
+function build(){
+  const idg = document.getElementById('idgrid');
+  IDF.forEach(f => {
+    const id = 'id-' + f.k;
+    idg.append(h('div', {class:'f' + (f.wide ? ' wide' : '')},
+      h('label', {for:id}, f.label, f.req ? h('span', {class:'req', 'aria-hidden':'true'}, ' *') : null),
+      h('input', {class:'fi', type:f.type || 'text', id, 'data-k':'id_' + f.k, placeholder:f.ph || null, autocomplete:f.ac || null, required:!!f.req})));
+  });
+  const form = document.getElementById('form');
+  SECS.forEach(s => {
+    const head = h('div', {class:'sheet-h'},
+      h('span', {class:'tag'}, 'Secção ' + s.n + ' · ' + s.qs.length + ' perguntas'),
+      h('h2', {id:'h-' + s.slug}, s.title),
+      h('p', null, s.lead));
+    if (!s.noWho) head.append(h('div', {class:'who'}, h('label', {for:'r-' + s.n}, 'Quem responde a esta secção (nome e cargo)'), h('input', {class:'fi', type:'text', id:'r-' + s.n, 'data-k':'r' + s.n, placeholder:'Se for outra pessoa que não o coordenador'})));
+    form.append(h('section', {class:'sheet', id:s.slug, 'aria-labelledby':'h-' + s.slug}, head, h('div', {class:'qs'}, s.qs.map(questionEl))));
+  });
+  const toc = document.getElementById('toc');
+  toc.append(h('div', {class:'grp'}, 'Secções'));
+  const link = (href, label, nid) => h('a', {href:'#' + href, 'data-href':href, onclick: e => { e.preventDefault(); const t = document.getElementById(href); if (t) t.scrollIntoView({behavior:'smooth', block:'start'}); }}, h('span', null, label), h('span', {class:'n', id:nid}, ''));
+  toc.append(link('identificacao', 'Identificação', 'n-id'));
+  SECS.forEach(s => toc.append(link(s.slug, s.nav, 'n-' + s.n)));
+  toc.append(link('enviar', 'Guardar e enviar', 'n-send'));
+  const sum = document.getElementById('sum');
+  SECS.forEach(s => sum.append(h('dt', null, s.n + '. ' + s.nav), h('dd', {id:'sd-' + s.n}, ''), h('span', {class:'meter', 'aria-hidden':'true'}, h('i', {id:'sb-' + s.n}))));
+  document.getElementById('pTot').textContent = TOTAL;
+}
+
+/* ---------- estado e formulário ---------- */
+function fillDom(){
+  document.querySelectorAll('[data-k]').forEach(el => {
+    const v = A[el.dataset.k];
+    if (el.type === 'radio') el.checked = v === el.value;
+    else if (el.type === 'checkbox') el.checked = Array.isArray(v) && v.includes(el.value);
+    else el.value = v == null ? '' : v;
+  });
+  Object.keys(QS).forEach(updateQ);
+}
+function updateQ(id){
+  const q = QS[id]; if (!q) return;
+  const el = document.getElementById('q-' + id.replace('.', '-'));
+  el.classList.toggle('done', answered(q));
+  if (q.other){
+    const o = document.getElementById(base(id) + '-o');
+    const v = A[id]; const on = Array.isArray(v) ? v.includes(q.other) : v === q.other;
+    o.hidden = !on;
+  }
+  if (q.t === 'calc'){
+    const hrs = calcHours(q);
+    document.getElementById(base(id) + '-out').textContent = hrs == null ? '≈ … h por mês' : '≈ ' + fmt1(hrs) + ' h por mês';
+  }
+}
+function counts(){
+  let tot = 0;
+  SECS.forEach(s => {
+    const d = s.qs.filter(answered).length; tot += d;
+    const n = document.getElementById('n-' + s.n); n.textContent = d + '/' + s.qs.length;
+    n.parentElement.classList.toggle('full', d === s.qs.length);
+    document.getElementById('sd-' + s.n).textContent = d + ' de ' + s.qs.length;
+    document.getElementById('sb-' + s.n).style.width = (100 * d / s.qs.length) + '%';
+  });
+  const idn = document.getElementById('n-id'); idn.textContent = str(A.id_nome) ? 'feito' : ''; idn.parentElement.classList.toggle('full', !!str(A.id_nome));
+  document.getElementById('pDone').textContent = tot;
+  document.getElementById('pBar').style.width = (100 * tot / TOTAL) + '%';
+  return tot;
+}
+function onInput(e){
+  const el = e.target, k = el.dataset && el.dataset.k; if (!k) return;
+  if (el.type === 'radio'){ if (!el.checked) return; A[k] = el.value; }
+  else if (el.type === 'checkbox'){
+    /* A opção «Não» exclui as restantes, e vice-versa. */
+    const q = QS[k];
+    if (q && q.none && el.checked) document.querySelectorAll('input[type=checkbox][name="' + el.name + '"]').forEach(x => { if (x !== el && (el.value === q.none || x.value === q.none)) x.checked = false; });
+    A[k] = Array.from(document.querySelectorAll('input[type=checkbox][name="' + el.name + '"]:checked')).map(x => x.value);
+  }
+  else A[k] = el.value;
+  if (k === 'id_nome' && str(el.value)) el.removeAttribute('aria-invalid');
+  dirty();
+  const qel = el.closest('.q'); if (qel) updateQ(qel.dataset.q);
+  counts();
+}
+
+/* ---------- saídas ---------- */
+function who(){ return [str(A.id_nome), str(A.id_cargo)].filter(Boolean).join(', '); }
+function header(){
+  const lines = ['Questionário de levantamento de processos · Município da Horta', 'Coordenação das respostas: ' + who() + (str(A.id_servico) ? ' · ' + str(A.id_servico) : '')];
+  const c = [str(A.id_email), str(A.id_tel)].filter(Boolean).join(' · ');
+  if (c) lines.push('Contacto: ' + c);
+  lines.push('Gerado em ' + new Date().toLocaleString('pt-PT'));
+  return lines;
+}
+function plainText(){
+  const out = header(); out.push('');
+  SECS.forEach(s => {
+    out.push(s.n + '. ' + s.title.toUpperCase());
+    if (str(A['r' + s.n])) out.push('Respondido por: ' + str(A['r' + s.n]));
+    out.push('');
+    s.qs.forEach(q => { out.push(q.id + ' ' + q.q); out.push('R: ' + (answerText(q) || '(sem resposta)')); out.push(''); });
+  });
+  return out.join('\n');
+}
+/* Pacote no formato de importação da app Levantamentos Enbia (secção Questões). */
+function levantamentosJson(){
+  const T = Date.now(), docs = {};
+  SECS.forEach(s => {
+    const resp = str(A['r' + s.n]) || who();
+    s.qs.forEach((q, i) => {
+      const rid = 'Q-CMH-' + (s.n * 100 + i + 1), a = answerText(q);
+      const f = {questao: q.id + ' ' + s.title + '. ' + q.q, resposta: a, responsavel: 'Município', nome: resp, estado: a ? 'Fechada' : 'Aberta'};
+      const t = {criado: T}; Object.keys(f).forEach(k => t[k] = T);
+      docs['q~' + rid] = {sec:'q', rid, f, t, upd:T};
+    });
+  });
+  return JSON.stringify({formato:'enbia-levantamento', versao:3, exportado:new Date(T).toISOString(), origem:'questionario-horta', docs}, null, 2);
+}
+/* O próprio ficheiro, com as respostas gravadas no bloco «respostas». */
+function filledHtml(){
+  const doc = new DOMParser().parseFromString(PRISTINE, 'text/html');
+  doc.querySelectorAll('script:not([data-q])').forEach(s => s.remove());
+  doc.documentElement.removeAttribute('data-theme');
+  doc.documentElement.setAttribute('lang', 'pt-PT');
+  const snap = Object.assign({}, A, {_upd: A._upd || Date.now()});
+  doc.getElementById('respostas').textContent = JSON.stringify(snap).replace(/</g, '\\u003c');
+  return '<!doctype html>\n' + doc.documentElement.outerHTML;
+}
+function stamp(){ const d = new Date(), p = n => String(n).padStart(2, '0'); return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()); }
+function need(){
+  const err = document.getElementById('err');
+  if (str(A.id_nome)){ err.hidden = true; return true; }
+  err.textContent = 'Indique o seu nome em Identificação antes de enviar, para sabermos a quem pedir esclarecimentos.';
+  err.hidden = false;
+  const f = document.getElementById('id-nome'); f.setAttribute('aria-invalid', 'true');
+  document.getElementById('identificacao').scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(() => f.focus({preventScroll:true}), 400);
+  return false;
+}
+let dlP = null;
+function getDownloads(){
+  if (!dlP) dlP = inViewer ? Promise.resolve(window.claude.use('downloads')).catch(() => null) : Promise.resolve(null);
+  return dlP;
+}
+/* Fora do claude.ai o browser descarrega diretamente; dentro do claude.ai usa a capacidade downloads. */
+async function saveFile(name, text, type){
+  if (inViewer){
+    const dl = await getDownloads();
+    if (!dl){ document.getElementById('noDl').hidden = false; return false; }
+    try { await dl.save({filename:name, data:text}); return true; }
+    catch(e){
+      const c = e && e.code;
+      if (c === 'declined') toast('Gravação cancelada.');
+      else if (c === 'rate_limited') toast('Já existe um pedido de gravação aberto. Conclua-o primeiro.');
+      else toast('Não foi possível gravar o ficheiro. Use «Copiar respostas em texto».');
+      return false;
+    }
+  }
+  try {
+    const url = URL.createObjectURL(new Blob([text], {type}));
+    const a = h('a', {href:url, download:name}); document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    return true;
+  } catch(e){ toast('Não foi possível gravar o ficheiro. Use «Copiar respostas em texto».'); return false; }
+}
+function markExported(){ exportedAt = Date.now(); A._exp = exportedAt; saveNow(); renderStatus(); }
+async function saveFilled(){
+  if (!need()) return;
+  const ok = document.getElementById('ok'); ok.hidden = true;
+  const btn = document.getElementById('bSave'); btn.disabled = true;
+  try {
+    if (!A._upd) A._upd = Date.now();
+    const name = 'Questionario_Horta_respostas_' + stamp() + '.html';
+    if (await saveFile(name, filledHtml(), 'text/html')){
+      markExported();
+      ok.textContent = 'Ficheiro «' + name + '» guardado na pasta de transferências. Envie-o em resposta ao email da Enbia ou reencaminhe-o a um colega para completar outra secção.';
+      ok.hidden = false;
+    }
+  } finally { btn.disabled = false; }
+}
+async function copyText(){
+  if (!need()) return;
+  const txt = plainText();
+  const fb = document.getElementById('fb'), ta = document.getElementById('fbText');
+  try {
+    await navigator.clipboard.writeText(txt);
+    fb.hidden = true; markExported();
+    toast('Respostas copiadas. Cole-as no corpo do email.');
+  } catch(e){
+    ta.value = txt; fb.hidden = false; ta.focus(); ta.select();
+  }
+}
+async function exportLevantamentos(){
+  if (await saveFile('Levantamento_Horta_questionario_' + stamp() + '.json', levantamentosJson(), 'application/json'))
+    toast('Pacote gerado. Na app Levantamentos, abra o projeto Horta e use Importar.');
+}
+
+/* ---------- estado do armazenamento e limpeza ---------- */
+function renderStatus(){
+  const s = document.getElementById('status');
+  if (!storageOk) s.textContent = 'Este navegador não está a guardar as respostas. Guarde o ficheiro com as respostas antes de fechar.';
+  else if (lastSaved) s.textContent = 'Respostas guardadas neste computador às ' + hhmm(lastSaved) + (exportedAt ? '. Último ficheiro gravado ' + when(exportedAt) + '.' : '.');
+  else s.textContent = 'Este computador guarda as respostas à medida que escreve. Para as enviar, grave o ficheiro com as respostas.';
+}
+function clearAll(){
+  try { localStorage.removeItem(KEY); } catch(e){}
+  A = (+fileState._upd || 0) ? JSON.parse(JSON.stringify(fileState)) : defaults();
+  exportedAt = +A._exp || 0; lastSaved = 0;
+  fillDom(); counts(); renderStatus();
+  document.getElementById('confirm').hidden = true;
+  document.getElementById('bClear').hidden = false;
+  document.getElementById('ok').hidden = true;
+  document.getElementById('restore').hidden = true;
+  toast('Respostas deste computador apagadas.');
+}
+let toastT = null;
+function toast(m){ const t = document.getElementById('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 3600); }
+
+/* ---------- índice ativo ---------- */
+function watchSections(){
+  if (!('IntersectionObserver' in window)) return;
+  const links = Array.from(document.querySelectorAll('nav.toc a'));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      links.forEach(a => a.classList.toggle('on', a.dataset.href === en.target.id));
+      const on = links.find(a => a.classList.contains('on'));
+      if (on && window.matchMedia('(max-width:900px)').matches) on.parentElement.scrollTo({left: on.offsetLeft - 16, behavior:'smooth'});
+    });
+  }, {rootMargin:'-30% 0px -60% 0px'});
+  ['identificacao', ...SECS.map(s => s.slug), 'enviar'].forEach(id => { const el = document.getElementById(id); if (el) io.observe(el); });
+}
+
+/* ---------- arranque ---------- */
+function start(data){
+  loadState();
+  if (data && data.A && !Object.keys(A).length) A = data.A;
+  build(); fillDom(); counts(); renderStatus();
+  document.addEventListener('input', onInput);
+  document.addEventListener('change', onInput);
+  document.getElementById('bSave').onclick = saveFilled;
+  document.getElementById('bCopy').onclick = copyText;
+  document.getElementById('bLev').onclick = exportLevantamentos;
+  document.getElementById('bRestore').onclick = () => { A = JSON.parse(JSON.stringify(fileState)); dirty(); fillDom(); counts(); document.getElementById('restore').hidden = true; toast('A mostrar as respostas gravadas no ficheiro.'); };
+  document.getElementById('bClear').onclick = () => { document.getElementById('confirm').hidden = false; document.getElementById('bClear').hidden = true; };
+  document.getElementById('bClearNo').onclick = () => { document.getElementById('confirm').hidden = true; document.getElementById('bClear').hidden = false; };
+  document.getElementById('bClearYes').onclick = clearAll;
+  document.getElementById('form').addEventListener('submit', e => e.preventDefault());
+  if (inViewer) getDownloads().then(dl => { if (!dl){ document.getElementById('bSave').hidden = true; document.getElementById('noDl').hidden = false; } });
+  window.addEventListener('beforeunload', e => { if (!storageOk && (+A._upd || 0) > exportedAt){ e.preventDefault(); e.returnValue = ''; } });
+  watchSections();
+  try { if (window.claude && window.claude.hot && typeof window.claude.hot.snapshot === 'function') window.claude.hot.snapshot(() => ({A})); } catch(e){}
+}
+const hot = window.claude && window.claude.hot;
+if (hot && typeof hot.ready === 'function') hot.ready(start); else start((hot && hot.data) || {});
+})();
+</script>
+
+</body>
+</html>
