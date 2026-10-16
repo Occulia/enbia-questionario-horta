@@ -179,7 +179,7 @@ footer a:hover{color:var(--ink);text-decoration:underline}
       <ol class="steps">
         <li><b>Responder</b>Pela ordem que preferir. Tudo o que escreve fica guardado automaticamente, mesmo que feche a página.</li>
         <li><b>Partilhar internamente</b>Pode partilhar este mesmo link com colegas de outros serviços (Contabilidade, Aprovisionamento, Segurança/Armazém) para completarem as respetivas secções.</li>
-        <li><b>Submeter</b>No fim da página, clique em «Submeter respostas à Enbia» quando terminar.</li>
+        <li><b>Submeter</b>No fim da página, clique em «Submeter respostas» quando terminar.</li>
       </ol>
       <p class="privacy">Não inclua dados pessoais de munícipes ou trabalhadores. Quando der exemplos, use casos anonimizados.</p>
     </section>
@@ -192,22 +192,17 @@ footer a:hover{color:var(--ink);text-decoration:underline}
     <form id="form" novalidate></form>
 
     <section class="sheet send" id="enviar" aria-labelledby="h-send">
-      <div class="sheet-h"><span class="tag">Para terminar</span><h2 id="h-send">Submeter à Enbia</h2><p>As respostas vão ficando guardadas automaticamente à medida que escreve. Clique no botão abaixo para confirmar a submissão à Enbia.</p></div>
+      <div class="sheet-h"><span class="tag">Para terminar</span><h2 id="h-send">Submeter respostas</h2><p>As respostas vão ficando guardadas automaticamente à medida que escreve. Clique no botão abaixo para confirmar a submissão.</p></div>
       <div class="body">
         <dl class="sum" id="sum"></dl>
         <p class="msg err" id="err" role="alert" hidden></p>
         <div class="btns">
-          <button class="btn primary" type="button" id="bSubmit">Submeter respostas à Enbia</button>
+          <button class="btn primary" type="button" id="bSubmit">Submeter respostas</button>
         </div>
         <p class="msg ok" id="ok" role="status" hidden></p>
         <p class="status" id="status"></p>
       </div>
     </section>
-
-    <footer>
-      <span>Enbia, Inteligência e Automação · Enbiente</span>
-      <a href="/admin">Área reservada Enbia</a>
-    </footer>
   </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
