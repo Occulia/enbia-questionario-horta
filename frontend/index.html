@@ -200,7 +200,6 @@ footer a:hover{color:var(--ink);text-decoration:underline}
           <button class="btn primary" type="button" id="bSubmit">Submeter respostas</button>
         </div>
         <p class="msg ok" id="ok" role="status" hidden></p>
-        <p class="status" id="status"></p>
       </div>
     </section>
   </main>
@@ -601,12 +600,7 @@ async function submitToEnbia(){
   }
 }
 
-function renderStatus(){
-  const s = document.getElementById('status');
-  if (submittedAt) s.textContent = 'Última submissão enviada à Enbia em ' + when(submittedAt) + (lastSaved > submittedAt ? ' · Alterações guardadas automaticamente às ' + hhmm(lastSaved) + '.' : '.');
-  else if (lastSaved) s.textContent = 'Respostas guardadas automaticamente às ' + hhmm(lastSaved) + ' (pode fechar a página a qualquer momento sem perder o progresso).';
-  else s.textContent = 'As respostas são guardadas automaticamente à medida que escreve, mesmo que feche a página.';
-}
+function renderStatus(){}
 
 let toastT = null;
 function toast(m){ const t = document.getElementById('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 3600); }
