@@ -165,6 +165,20 @@ app.put('/api/questionnaire', async (req, res) => {
   }
 });
 
+// Suporte a navigator.sendBeacon / keepalive quando o utilizador fecha o separador
+app.post('/api/questionnaire/beacon', express.text({ type: '*/*', limit: '2mb' }), async (req, res) => {
+  try {
+    const parsed = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const answers = parsed && parsed.answers ? parsed.answers : parsed;
+    if (answers && typeof answers === 'object') {
+      await saveState(answers, { slug: 'horta', markSubmitted: false });
+    }
+    res.status(204).end();
+  } catch (_e) {
+    res.status(204).end();
+  }
+});
+
 app.post('/api/questionnaire/submit', async (req, res) => {
   try {
     const answers = req.body && req.body.answers ? req.body.answers : req.body;

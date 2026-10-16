@@ -62,16 +62,16 @@ curl -s http://192.168.1.5:4400/health/db
 
 ### Passo 3 — Expor URL Público no Cloudflare Tunnel (no Host Proxmox `192.168.1.70`)
 O `cloudflared` corre no **host Proxmox (`192.168.1.70`)** sobre o túnel `enbiente-nas`.
-Para publicar em `horta.enbia.pt` (ou `horta.enbiente.com`):
+Para publicar em `horta-questionario.enbia.pt`:
 
 1. Editar `/etc/cloudflared/config.yml` no host (`.70`) e adicionar antes do catch-all `http_status:404`:
    ```yaml
-     - hostname: horta.enbia.pt
+     - hostname: horta-questionario.enbia.pt
        service: http://192.168.1.5:4400
    ```
 2. Criar a rota DNS e recarregar o túnel sem downtime:
    ```bash
-   cloudflared tunnel route dns enbiente-nas horta.enbia.pt
+   cloudflared tunnel route dns enbiente-nas horta-questionario.enbia.pt
    cloudflared --config /etc/cloudflared/config.yml tunnel ingress validate
    systemctl reload cloudflared
    ```
@@ -80,7 +80,7 @@ Para publicar em `horta.enbia.pt` (ou `horta.enbiente.com`):
 
 ## 3. Acessos
 
-- **Questionário Público (Município da Horta)**: `https://horta.enbia.pt/`
-- **Área de Administração Enbia**: `https://horta.enbia.pt/admin`
+- **Questionário Público (Município da Horta)**: `https://horta-questionario.enbia.pt/`
+- **Área de Administração Enbia**: `https://horta-questionario.enbia.pt/admin`
   - **User**: `admin`
   - **Pass**: `Enb_516571516`
